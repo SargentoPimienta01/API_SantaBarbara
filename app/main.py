@@ -5,6 +5,7 @@ from app.routers import maple
 from app.routers import incubadora
 from app.routers import huevo
 from app.routers import observaciones
+from app.routers import get_routes
 
 # Inicializar la aplicación FastAPI
 app = FastAPI()
@@ -26,6 +27,7 @@ app.include_router(maple.router)
 app.include_router(incubadora.router)
 app.include_router(huevo.router)
 app.include_router(observaciones.router)
+app.include_router(get_routes.router)
 
 # Prueba inicial para verificar que el servidor está corriendo
 @app.get("/")
