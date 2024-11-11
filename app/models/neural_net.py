@@ -4,7 +4,7 @@ import tensorflow as tf
 from keras import layers, models
 
 # Cargar el modelo de la red neuronal entrenada una sola vez
-model = tf.keras.models.load_model('/Users/Alex/Desktop/ISI/Python/ProyectoSantaBarbara/modelo_cnn.h5')
+model = tf.keras.models.load_model('D:\TESIS\Backend\RedNeuronal\ProyectoSantaBarbara\modelo_cnn.h5')
 
 # Definir el modelo CNN mejorado con salidas múltiples
 def crear_modelo_cnn_mejorado(tamaño_imagen=(128, 128)):

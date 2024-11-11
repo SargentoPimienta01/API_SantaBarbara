@@ -1,4 +1,5 @@
 import tensorflow as tf
+import numpy as np
 
 layers = tf.keras.layers
 models = tf.keras.models
@@ -20,6 +21,10 @@ def crear_modelo_feedback(input_shape):
 def entrenar_modelo_feedback(datos_entrada, etiquetas):
     input_shape = (datos_entrada.shape[1],)  # Dimensión de entrada basada en el DataFrame
     modelo = crear_modelo_feedback(input_shape)
+    
+    # Convertir el DataFrame de entrada en un numpy array
+    datos_entrada = datos_entrada.values  # Convierte el DataFrame a numpy array
+    etiquetas = np.array(etiquetas)       # Asegúrate de que las etiquetas también estén en numpy array
     
     # Entrenamiento del modelo
     modelo.fit(datos_entrada, etiquetas, epochs=10, batch_size=4)  # Ajusta los epochs y batch según necesidades

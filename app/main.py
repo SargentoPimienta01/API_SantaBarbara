@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pandas as pd
 from app.routers import predictions, healtcheck, maple, incubadora, huevo, observaciones, get_routes
-from feedback.data_preparation import entrenar_modelo_feedback, predecir_feedback
+from app.feedback.data_preparation import entrenar_modelo_feedback, predecir_feedback
 
 # Inicializar la aplicación FastAPI
 app = FastAPI()
