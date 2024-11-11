@@ -1,5 +1,7 @@
 import tensorflow as tf
-from tensorflow.keras import layers, models
+
+layers = tf.keras.layers
+models = tf.keras.models
 import pandas as pd
 
 # Función para crear el modelo de retroalimentación
