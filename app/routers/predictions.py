@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, File, UploadFile
 from app.models.egg_model import EggData
 from app.services.predictions import process_prediction, predecir_viabilidad
 from app.models.neural_net import predecir_viabilidad
-from app.database.connection import db
+from app.database import db
 import shutil
 import os
 from datetime import datetime

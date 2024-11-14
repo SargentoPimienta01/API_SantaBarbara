@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from app.database.connection import db  # Conexión a MongoDB
+from app.database import db  # Conexión a MongoDB
 
 router = APIRouter()
 

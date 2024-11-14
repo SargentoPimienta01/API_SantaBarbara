@@ -3,7 +3,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 from typing import List
 from pydantic import BaseModel
-from app.database.connection import db 
+from app.database import db 
 
 router = APIRouter()
 

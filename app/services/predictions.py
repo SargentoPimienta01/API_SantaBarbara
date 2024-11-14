@@ -1,5 +1,5 @@
 from app.models.neural_net import predecir_viabilidad, detectar_huevos
-from app.database.connection import db
+from app.database import db
 import cv2
 import numpy as np
 from datetime import datetime
