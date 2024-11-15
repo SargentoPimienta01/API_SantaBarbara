@@ -3,8 +3,11 @@ from app.database import db
 from app.models import IncubadoraModel, MapleModel, HuevoModel, ObservacionModel
 from app.analysis import analyze_maple_image
 from fastapi.middleware.cors import CORSMiddleware
+import logging
 
 app = FastAPI()
+
+logging.basicConfig(level=logging.INFO)
 
 # Configura CORS
 app.add_middleware(
@@ -17,7 +20,12 @@ app.add_middleware(
 
 
 @app.post("/maple/procesar")
-async def procesar_maple(id_incubadora: str = Form(...), file: UploadFile = File(...)):
+async def procesar_maple(id_incubadora: str = Form(...), serial_maple: str = Form(...), file: UploadFile = File(...)):
+
+    logging.info(f"Received id_incubadora: {id_incubadora}")
+    logging.info(f"Received serial_maple: {serial_maple}")
+    content = await file.read()
+    logging.info(f"File received: {len(content)} bytes")
     content = await file.read()
     results = analyze_maple_image(content)
     maple_data = {
