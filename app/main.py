@@ -1,12 +1,23 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
-from database import db
-from models import IncubadoraModel, MapleModel, HuevoModel, ObservacionModel
-from analysis import analyze_maple_image
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form
+from app.database import db
+from app.models import IncubadoraModel, MapleModel, HuevoModel, ObservacionModel
+from app.analysis import analyze_maple_image
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+# Configura CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4321"],
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos los métodos (GET, POST, etc.)
+    allow_headers=["*"],  # Permite todos los encabezados
+)
+
+
 @app.post("/maple/procesar")
-async def procesar_maple(id_incubadora: str, file: UploadFile = File(...)):
+async def procesar_maple(id_incubadora: str = Form(...), file: UploadFile = File(...)):
     content = await file.read()
     results = analyze_maple_image(content)
     maple_data = {
