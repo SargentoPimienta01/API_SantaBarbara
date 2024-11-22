@@ -1,48 +1,41 @@
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
-from tensorflow.keras.preprocessing.image import img_to_array
+import cv2
 import numpy as np
+import tensorflow as tf
+from keras import models
+import uuid
 
-# Definir las etiquetas de color
-COLOR_LABELS = ["blanco", "marrón", "otro"]
+# Cargar el modelo entrenado
+model = models.load_model("app/neural_networks.py")
 
-# Crear el modelo de red neuronal convolucional para clasificación de color
-def create_color_model():
-    model = Sequential([
-        Conv2D(32, (3, 3), activation='relu', input_shape=(64, 64, 3)),
-        MaxPooling2D(pool_size=(2, 2)),
-        Conv2D(64, (3, 3), activation='relu'),
-        MaxPooling2D(pool_size=(2, 2)),
-        Conv2D(128, (3, 3), activation='relu'),
-        MaxPooling2D(pool_size=(2, 2)),
-        Flatten(),
-        Dense(128, activation='relu'),
-        Dropout(0.5),
-        Dense(len(COLOR_LABELS), activation='softmax')
-    ])
-    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    return model
+def generate_unique_id():
+    """Genera un ID único para cada huevo detectado."""
+    return str(uuid.uuid4())
 
-# Instanciar el modelo
-color_model = create_color_model()
+def detect_eggs(image_content):
+    """Detecta huevos y devuelve sus posiciones y características."""
+    # Convierte el contenido de la imagen en un arreglo
+    nparr = np.frombuffer(image_content, np.uint8)
+    image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-# Función para entrenar la red (esto se haría con un conjunto de datos de imágenes etiquetadas previamente)
-def train_color_model(X_train, y_train, X_val, y_val, epochs=10, batch_size=32):
-    y_train = tf.keras.utils.to_categorical(y_train, num_classes=len(COLOR_LABELS))
-    y_val = tf.keras.utils.to_categorical(y_val, num_classes=len(COLOR_LABELS))
-    color_model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epochs, batch_size=batch_size)
+    # Preprocesa la imagen para el modelo
+    input_image = cv2.resize(image, (224, 224))  # Ajustar al tamaño que requiere el modelo
+    input_image = input_image / 255.0  # Normalizar entre 0 y 1
+    input_image = np.expand_dims(input_image, axis=0)  # Agregar una dimensión para el batch
 
-# Función para predecir el color de un huevo basado en su imagen
-def analyze_color(egg_image):
-    # Preprocesamiento de la imagen para ser compatible con la entrada del modelo
-    egg_image = cv2.resize(egg_image, (64, 64))  # Redimensiona la imagen a 64x64
-    egg_image = img_to_array(egg_image) / 255.0  # Normaliza los valores de píxeles entre 0 y 1
-    egg_image = np.expand_dims(egg_image, axis=0)  # Agrega una dimensión para el batch
+    # Realiza la predicción
+    predictions = model.predict(input_image)
 
-    # Realizar la predicción de color
-    prediction = color_model.predict(egg_image)
-    color_index = np.argmax(prediction)
-    color_name = COLOR_LABELS[color_index]
+    # Procesa la salida del modelo
+    eggs_data = []
+    for i, prediction in enumerate(predictions):
+        egg_id = generate_unique_id()
+        # Ejemplo de extracción de características (ajusta según tu modelo):
+        viabilidad = "viable" if prediction[0] > 0.5 else "inviable"
+        position = [i // 15, i % 15]  # Suponiendo un arreglo de 10x15 huevos
+        eggs_data.append({
+            "id_huevo": egg_id,
+            "viabilidad": viabilidad,
+            "position": position
+        })
 
-    return {"color": color_name, "confidence": prediction[0][color_index]}
+    return eggs_data
